@@ -69,42 +69,43 @@ figure('Position',default_size);
 plotmatrix(wind_data.da_rt)
 title('DA-RT forecast error')
 
-%% DA&RT errors of persistence forecast (a forecast that the future weather
+%% RT persistence forecast (a forecast that the future weather
 % condition will be the same as the present condition
-persist_forecast.da = [NaN, NaN, NaN, NaN; wind_data.da(1:(end-1),:)];
+% Day-ahead persistence forecast just makes no sense
+% persist_forecast.da = [NaN, NaN, NaN, NaN; wind_data.da(1:(end-1),:)];
 persist_forecast.rt = [NaN, NaN, NaN, NaN; wind_data.rt(1:(end-1),:)];
-persist_forecast_MWerr.da = persist_forecast.da - wind_data.da;
+% persist_forecast_MWerr.da = persist_forecast.da - wind_data.da;
 persist_forecast_MWerr.rt = persist_forecast.rt - wind_data.rt;
-% plot DA time series
-figure('Position',default_size);
-for iw = 1:nw
-    subplot(nw,1,iw)
-    plot(time_indices.da, persist_forecast_MWerr.da), hold on,
-    xlabel('day (366 days in total)'),
-    ylabel([wind_names{iw}, ' (MW)']),
-    hold off
-end
-
-% plot DA histogram
-figure('Position',default_size);
-for iw = 1:nw
-    subplot(2,2,iw)
-    histogram(persist_forecast_MWerr.da,100,'FaceColor','#A2142F', 'Facealpha', 1),hold on,
-    xlabel('DA persistence forecast error (MW)')
-    ylabel('frequency (out of 8784)')
-    title(wind_names{iw})
-    hold off
-end
-
-% pair() plot, to show correlation
-figure('Position',default_size);
-plotmatrix(persist_forecast_MWerr.da)
-title('DA persistence forecast error')
-
-series = persist_forecast_MWerr.da(2:end,:); % first row is NaN
-[corr_mat, p_mat] = corrcoef(series);
-disp(corr_mat);
-disp(p_mat);
+% % plot DA time series
+% figure('Position',default_size);
+% for iw = 1:nw
+%     subplot(nw,1,iw)
+%     plot(time_indices.da, persist_forecast_MWerr.da), hold on,
+%     xlabel('day (366 days in total)'),
+%     ylabel([wind_names{iw}, ' (MW)']),
+%     hold off
+% end
+% 
+% % plot DA histogram
+% figure('Position',default_size);
+% for iw = 1:nw
+%     subplot(2,2,iw)
+%     histogram(persist_forecast_MWerr.da,100,'FaceColor','#A2142F', 'Facealpha', 1),hold on,
+%     xlabel('DA persistence forecast error (MW)')
+%     ylabel('frequency (out of 8784)')
+%     title(wind_names{iw})
+%     hold off
+% end
+% 
+% % pair() plot, to show correlation
+% figure('Position',default_size);
+% plotmatrix(persist_forecast_MWerr.da)
+% title('DA persistence forecast error')
+% 
+% series = persist_forecast_MWerr.da(2:end,:); % first row is NaN
+% [corr_mat, p_mat] = corrcoef(series);
+% disp(corr_mat);
+% disp(p_mat);
 
 % plot RT time series
 figure('Position',default_size);
