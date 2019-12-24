@@ -29,6 +29,7 @@ for iw = 1:nw
     wind_data.da_rt(:,iw) = temp(:)-wind_data.rt(:,iw);
 end
 
+
 %% Plotting Wind Profiles
 figure('Position',default_size);
 for iw = 1:nw
@@ -43,6 +44,11 @@ for iw = 1:nw
 end
 
 %% DA-RT error
+% examine independence
+[corr_mat, p_mat] = corrcoef(wind_data.da_rt);
+disp(corr_mat);
+disp(p_mat);
+
 % plot time series
 figure('Position',default_size);
 plot(time_indices.rt, wind_data.da_rt)
@@ -52,12 +58,16 @@ xlabel('day (366 days in total)'), ylabel('DA-RT Error (MW)')
 figure('Position',default_size);
 for iw = 1:nw
     subplot(2,2,iw)
-    histogram(wind_data.da_rt(:,iw),20,'FaceColor','#A2142F'),hold on,
+    histogram(wind_data.da_rt(:,iw),20,'FaceColor','#A2142F', 'Facealpha', 1),hold on,
 %     histfit(wind_data.da_rt(:,iw),20,'normal') % not a good fit
     xlabel('DA-RT Error (MW)')
     ylabel('frequency (out of 105408)')
     title(wind_names{iw})
 end
+% pair() plot, to show correlation
+figure('Position',default_size);
+plotmatrix(wind_data.da_rt)
+title('DA-RT forecast error')
 
 %% DA&RT errors of persistence forecast (a forecast that the future weather
 % condition will be the same as the present condition
@@ -79,11 +89,22 @@ end
 figure('Position',default_size);
 for iw = 1:nw
     subplot(2,2,iw)
-    histogram(persist_forecast_MWerr.da,20,'FaceColor','#A2142F'),hold on,
+    histogram(persist_forecast_MWerr.da,100,'FaceColor','#A2142F', 'Facealpha', 1),hold on,
     xlabel('DA persistence forecast error (MW)')
-    ylabel([wind_names{iw}, ' (MW)']),
+    ylabel('frequency (out of 8784)')
+    title(wind_names{iw})
     hold off
 end
+
+% pair() plot, to show correlation
+figure('Position',default_size);
+plotmatrix(persist_forecast_MWerr.da)
+title('DA persistence forecast error')
+
+series = persist_forecast_MWerr.da(2:end,:); % first row is NaN
+[corr_mat, p_mat] = corrcoef(series);
+disp(corr_mat);
+disp(p_mat);
 
 % plot RT time series
 figure('Position',default_size);
@@ -99,11 +120,24 @@ end
 figure('Position',default_size);
 for iw = 1:nw
     subplot(2,2,iw)
-    histogram(persist_forecast_MWerr.rt,50,'FaceColor','#A2142F'),hold on,
+    histogram(persist_forecast_MWerr.rt,100,'FaceColor','#A2142F', 'Facealpha', 1),hold on,
     xlabel('RT persistence forecast error (MW)')
-    ylabel([wind_names{iw}, ' (MW)']),
+    ylabel('frequency (out of 105408)')
+    title(wind_names{iw})
     hold off
 end
+
+% pair() plot, to show correlation
+figure('Position',default_size);
+plotmatrix(persist_forecast_MWerr.rt)
+title('RT persistence forecast error')
+
+series = persist_forecast_MWerr.rt(2:end,:); % first row is NaN
+[corr_mat, p_mat] = corrcoef(series);
+disp(corr_mat);
+disp(p_mat);
+
+return
 
 persist_forecast_percent_err.da = persist_forecast.da ./ wind_data.da - 1;
 persist_forecast_percent_err.rt = persist_forecast.rt ./ wind_data.rt - 1;
@@ -111,8 +145,8 @@ persist_forecast_percent_err.rt = persist_forecast.rt ./ wind_data.rt - 1;
 figure('Position',default_size);
 for iw = 1:nw
     subplot(2,2,iw)
-    histogram(persist_forecast_percent_err.da,100,'FaceColor','#A2142F'),hold on,
-    xlabel('RT persistence forecast error (%)')
+    histogram(persist_forecast_percent_err.da,100,'FaceColor','#A2142F', 'Facealpha', 1),hold on,
+    xlabel('DA persistence forecast error (%)')
     ylabel(wind_names{iw}),
     hold off
 end
@@ -120,7 +154,7 @@ end
 figure('Position',default_size);
 for iw = 1:nw
     subplot(2,2,iw)
-    histogram(persist_forecast_percent_err.rt,100,'FaceColor','#A2142F'),hold on,
+    histogram(persist_forecast_percent_err.rt,100,'FaceColor','#A2142F', 'Facealpha', 1),hold on,
     xlabel('RT persistence forecast error (%)')
     ylabel(wind_names{iw}),
     hold off
